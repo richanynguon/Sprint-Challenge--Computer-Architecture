@@ -49,99 +49,15 @@ class CPU:
 
     def load(self, file=None):
         address = 0
-        # for line in file:
-        #     comment_split = line.split("#")
-        #     num = comment_split[0].strip()
-        #     if num == '':
-        #         continue
-        #     value = int(num, 2)
-        #     self.ram[address] = value
-        #     address += 1
-        filex = [
-            0b10000010,  # LDI R0,10
-            0b00000000,
-            0b00001010,
-            0b10000010,  # LDI R1,20
-            0b00000001,
-            0b00010100,
-            0b10000010,  # LDI R2,TEST1
-            0b00000010,
-            0b00010011,
-            0b10100111,  # CMP R0,R1
-            0b00000000,
-            0b00000001,
-            0b01010101,  # JEQ R2
-            0b00000010,
-            0b10000010,  # LDI R3,1
-            0b00000011,
-            0b00000001,
-            0b01000111,  # PRN R3
-            0b00000011,
-            # TEST1 (address 19):
-            0b10000010,  # LDI R2,TEST2
-            0b00000010,
-            0b00100000,
-            0b10100111,  # CMP R0,R1
-            0b00000000,
-            0b00000001,
-            0b01010110,  # JNE R2
-            0b00000010,
-            0b10000010,  # LDI R3,2
-            0b00000011,
-            0b00000010,
-            0b01000111,  # PRN R3
-            0b00000011,
-            # TEST2 (address 32):
-            0b10000010,  # LDI R1,10
-            0b00000001,
-            0b00001010,
-            0b10000010,  # LDI R2,TEST3
-            0b00000010,
-            0b00110000,
-            0b10100111,  # CMP R0,R1
-            0b00000000,
-            0b00000001,
-            0b01010101,  # JEQ R2
-            0b00000010,
-            0b10000010,  # LDI R3,3
-            0b00000011,
-            0b00000011,
-            0b01000111,  # PRN R3
-            0b00000011,
-            # TEST3 (address 48):
-            0b10000010,  # LDI R2,TEST4
-            0b00000010,
-            0b00111101,
-            0b10100111,  # CMP R0,R1
-            0b00000000,
-            0b00000001,
-            0b01010110,  # JNE R2
-            0b00000010,
-            0b10000010,  # LDI R3,4
-            0b00000011,
-            0b00000100,
-            0b01000111,  # PRN R3
-            0b00000011,
-            # TEST4 (address 61):
-            0b10000010,  # LDI R3,5
-            0b00000011,
-            0b00000101,
-            0b01000111,  # PRN R3
-            0b00000011,
-            0b10000010,  # LDI R2,TEST5
-            0b00000010,
-            0b01001001,
-            0b01010100,  # JMP R2
-            0b00000010,
-            0b01000111,  # PRN R3
-            0b00000011,
-            # TEST5 (address 73):
-            0b00000001,  # HLT
-        ]
-        for line in filex:
-            self.ram[address] = line
+        for line in file:
+            comment_split = line.split("#")
+            num = comment_split[0].strip()
+            if num == '':
+                continue
+            value = int(num, 2)
+            self.ram[address] = value
             address += 1
-
+       
     def alu(self, op, reg_a, reg_b):
       # - [ ] Add the ALU operations: `AND` `OR` `XOR` `NOT` `SHL` `SHR` `MOD`
         if op in self.alu_branch:
@@ -212,7 +128,5 @@ class CPU:
         self.reg[reg_a] = ~self.reg[reg_a]
 
 
-# - [ ] Add the ALU operations: `AND` `OR` `XOR` `NOT` `SHL` `SHR` `MOD`
-# - [ ] Add an `ADDI` extension instruction to add an immediate value to a register
-# - [ ] Add timer interrupts
-# - [ ] Add keyboard interrupts
+# - [x] Add the ALU operations: `AND` `OR` `XOR` `NOT` `SHL` `SHR` `MOD`
+
