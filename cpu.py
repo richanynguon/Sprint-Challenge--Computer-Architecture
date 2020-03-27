@@ -24,12 +24,22 @@ class CPU:
 
         self.branch = {}
         self.branch[LDI] = lambda mar, mdr: self.ldi(mar, mdr)
-        self.branch[CMP] = lambda mar, mdr: self.cmpr(mar, mdr)
+        self.branch[CMP] = lambda mar, mdr: self.alu("CMP", mar, mdr)
         self.branch[JEQ] = lambda mar, __: self.jeq(mar)
         self.branch[JNE] = lambda mar, __: self.jne(mar)
         self.branch[JMP] = lambda mar, __: self.jmp(mar)
         self.branch[PRN] = lambda mar, __: self.prn(mar)
         self.branch[HLT] = lambda _, __: self.hlt()
+
+        self.alu_branch = {}
+        self.alu_branch["CMP"] = lambda mara, marb: self.alu_cmp(mara, marb)
+        self.alu_branch["AND"] = lambda mara, marb: self.alu_and(mara, marb)
+        self.alu_branch["OR"] = lambda mara, marb: self.alu_or(mara, marb)
+        self.alu_branch["XOR"] = lambda mara, marb: self.alu_xor(mara, marb)
+        self.alu_branch["NOT"] = lambda mar, __: self.alu_not(mar)
+        self.alu_branch["SHL"] = lambda mara, marb: self.alu_shl(mara, marb)
+        self.alu_branch["SHR"] = lambda mara, marb: self.alu_shr(mara, marb)
+        self.alu_branch["MOD"] = lambda mara, marb: self.alu_mod(mara, marb)
 
     def ram_read(self, MAR):
         return self.ram[MAR]
@@ -133,18 +143,9 @@ class CPU:
             address += 1
 
     def alu(self, op, reg_a, reg_b):
-        if op == "CMP":
-            # Compare the values in two registers.
-            # * If they are equal, set the Equal `E` flag to 1, otherwise set it to 0.
-            # * If registerA is less than registerB, set the Less-than `L` flag to 1,
-            #   otherwise set it to 0.
-            # * If registerA is greater than registerB, set the Greater-than `G` flag
-            # to 1, otherwise set it to 0.
-            a_value = self.reg[reg_a]
-            b_value = self.reg[reg_b]
-            self.E = int(a_value == b_value)
-            self.L = int(a_value < b_value)
-            self.G = int(a_value > b_value)
+      # - [ ] Add the ALU operations: `AND` `OR` `XOR` `NOT` `SHL` `SHR` `MOD`
+        if op in self.alu_branch:
+            self.alu_branch[op](reg_a, reg_b)
         else:
             raise Exception("Unsupported ALU branch")
 
@@ -166,13 +167,10 @@ class CPU:
     def prn(self, mar):
         print(self.reg[mar])
 
-    def cmpr(self, mar, mdr):
-        self.alu("CMP", mar, mdr)
-
     def jmp(self, mar):
         # Jump to the address stored in the given register.
         # Set the `PC` to the address stored in the given register.
-        self.PC = self.reg[mar] -2
+        self.PC = self.reg[mar] - 2
 
     def jne(self, mar):
         # If `E` flag is clear (false, 0), jump to the address stored in the given
@@ -184,3 +182,37 @@ class CPU:
         # If `equal` flag is set (true), jump to the address stored in the given register.
         if self.E is True or self.E is 1:
             self.jmp(mar)
+
+    def alu_cmp(self, reg_a, reg_b):
+        a_value = self.reg[reg_a]
+        b_value = self.reg[reg_b]
+        self.E = int(a_value == b_value)
+        self.L = int(a_value < b_value)
+        self.G = int(a_value > b_value)
+
+    def alu_and(self, reg_a, reg_b):
+        self.reg[reg_a] = self.reg[reg_a] & self.reg[reg_b]
+
+    def alu_xor(self, reg_a, reg_b):
+        self.reg[reg_a] = self.reg[reg_a] ^ self.reg[reg_b]
+
+    def alu_or(self, reg_a, reg_b):
+        self.reg[reg_a] = self.reg[reg_a] | self.reg[reg_b]
+
+    def alu_shl(self, reg_a, reg_b):
+        self.reg[reg_a] = self.reg[reg_a] << self.reg[reg_b]
+
+    def alu_shr(self, reg_a, reg_b):
+        self.reg[reg_a] = self.reg[reg_a] >> self.reg[reg_b]
+
+    def alu_mod(self, reg_a, reg_b):
+        self.reg[reg_a] = self.reg[reg_a] % self.reg[reg_b]
+
+    def alu_not(self, reg_a):
+        self.reg[reg_a] = ~self.reg[reg_a]
+
+
+# - [ ] Add the ALU operations: `AND` `OR` `XOR` `NOT` `SHL` `SHR` `MOD`
+# - [ ] Add an `ADDI` extension instruction to add an immediate value to a register
+# - [ ] Add timer interrupts
+# - [ ] Add keyboard interrupts
